@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Discover stylish fashion, elegant outfits, accessories and everyday fashion finds at Aruh Fashion Store.">
+<title>Aruh Fashion Store</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#fff9f6;color:#332725;font-family:Arial,sans-serif}
+header{padding:22px 16px;text-align:center;background:#f4e2dc}
+.brand{font-family:Georgia,serif;font-size:29px;font-weight:bold}
+.brand span{color:#a45d68}
+header p{font-size:13px;color:#765b57}
+.hero{padding:32px 18px;text-align:center;background:#f8ece7}
+.hero h1{font-family:Georgia,serif;font-size:34px;margin:8px}
+.hero p{line-height:1.6;color:#765b57}
+.tag{font-size:11px;letter-spacing:3px;color:#a45d68}
+main{max-width:950px;margin:auto;padding:18px}
+.featured{background:white;border:1px solid #ecdcd5;border-radius:18px;padding:18px;margin-top:18px}
+.label{font-size:12px;color:#a45d68;font-weight:bold}
+#featuredEmoji{font-size:100px;text-align:center;padding:35px;background:#f4e5df;border-radius:14px;margin:12px 0}
+h2,h3{font-family:Georgia,serif}
+h2{font-size:26px}
+button,.buy{display:inline-block;border:0;border-radius:8px;background:#9e5966;color:white;padding:13px 17px;text-decoration:none;font-size:14px;cursor:pointer}
+.secondary{background:white;color:#794751;border:1px solid #d9b9b8;margin-left:5px}
+.search{width:100%;padding:13px;border:1px solid #e4ceca;border-radius:9px;font-size:16px;margin:12px 0}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{background:white;border:1px solid #eadbd5;border-radius:13px;padding:12px;text-align:left;color:#332725}
+.card .pic{background:#f7e9e3;border-radius:10px;text-align:center;font-size:55px;padding:24px 5px}
+.card strong{display:block;margin-top:10px;font-size:15px}
+.card small{display:block;margin-top:5px;color:#8b706a}
+section{margin-bottom:25px}
+.note{font-size:12px;color:#806d68;line-height:1.6;background:#f5e9e3;padding:13px;border-radius:9px}
+footer{text-align:center;padding:22px;font-size:12px;color:#806d68}
+@media(min-width:650px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.hero h1{font-size:45px}.featured{padding:26px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">Aruh <span>Fashion Store</span></div>
+  <p>Discover Your Style · Wear Your Confidence</p>
+</header>
+
+<div class="hero">
+  <div class="tag">YOUR STYLE DESTINATION</div>
+  <h1>Find Your Next<br>Fashion Favorite</h1>
+  <p>Beautiful outfits, timeless accessories and everyday fashion inspiration.</p>
+</div>
+
+<main>
+<section id="selected">
+  <div class="label">YOUR SELECTED FIND</div>
+  <div class="featured">
+    <div id="featuredEmoji">👗</div>
+    <div class="label" id="category">WOMEN'S FASHION</div>
+    <h2 id="title">Elegant Everyday Dress</h2>
+    <p id="description">Discover a stylish look for your wardrobe.</p>
+    <a id="buy" class="buy" href="#products">View Product ↗</a>
+    <button class="secondary" id="copy" type="button">Copy Page Link</button>
+  </div>
+</section>
+
+<section id="products">
+  <h2>Explore More Finds</h2>
+  <p>Choose a product to see it featured first.</p>
+  <input class="search" id="search" placeholder="Search fashion products..." aria-label="Search products">
+  <div class="grid" id="grid"></div>
+  <p id="empty" hidden>No products found.</p>
+</section>
+
+<p class="note"><strong>Affiliate disclosure:</strong> Some product links may earn us a commission at no extra cost to you. Sample links must be replaced with your own valid affiliate links before publishing.</p>
+</main>
+
+<footer>© <span id="year"></span> Aruh Fashion Store</footer>
+
+<script>
+const products=[
+ {id:"dress",name:"Elegant Everyday Dress",category:"Women's Fashion",emoji:"👗",description:"Discover an elegant dress for your next favorite outfit.",url:"https://example.com/dress"},
+ {id:"handbag",name:"Classic Fashion Handbag",category:"Bags & Accessories",emoji:"👜",description:"A versatile handbag to complement your everyday style.",url:"https://example.com/handbag"},
+ {id:"shoes",name:"Chic Everyday Shoes",category:"Shoes",emoji:"👠",description:"Complete your outfit with a stylish pair of shoes.",url:"https://example.com/shoes"},
+ {id:"jewelry",name:"Minimal Jewelry Set",category:"Jewelry",emoji:"💎",description:"Add a delicate finishing touch to your look.",url:"https://example.com/jewelry"},
+ {id:"sunglasses",name:"Modern Sunglasses",category:"Accessories",emoji:"🕶️",description:"A timeless accessory for your fashion collection.",url:"https://example.com/sunglasses"},
+ {id:"watch",name:"Classic Wristwatch",category:"Accessories",emoji:"⌚",description:"A simple, polished detail for everyday outfits.",url:"https://example.com/watch"}
+];
+const $=id=>document.getElementById(id);
+let selected;
+function choose(id,update=true){
+ selected=products.find(p=>p.id===id)||products[0];
+ $("featuredEmoji").textContent=selected.emoji;
+ $("category").textContent=selected.category.toUpperCase();
+ $("title").textContent=selected.name;
+ $("description").textContent=selected.description;
+ $("buy").href=selected.url;
+ $("buy").onclick=e=>{
+   if(selected.url.includes("example.com/")){
+     e.preventDefault();
+     alert("Please replace this sample URL with your real affiliate link first.");
+   }
+ };
+ if(update){
+   const u=new URL(location.href);
+   u.searchParams.set("product",selected.id);
+   history.replaceState({}, "",u);
+ }
+}
+function render(){
+ const q=$("search").value.trim().toLowerCase();
+ $("grid").innerHTML="";
+ const matches=products.filter(p=>(p.name+" "+p.category).toLowerCase().includes(q));
+ $("empty").hidden=matches.length>0;
+ matches.forEach(p=>{
+   const b=document.createElement("button");
+   b.className="card";
+   b.type="button";
+   b.innerHTML='<div class="pic"></div><strong></strong><small></small>';
+   b.querySelector(".pic").textContent=p.emoji;
+   b.querySelector("strong").textContent=p.name;
+   b.querySelector("small").textContent=p.category;
+   b.onclick=()=>{
+     choose(p.id);
+     $("selected").scrollIntoView({behavior:"smooth"});
+   };
+   $("grid").appendChild(b);
+ });
+}
+$("search").addEventListener("input",render);
+$("copy").onclick=async()=>{
+ const u=new URL(location.href);
+ u.searchParams.set("product",selected.id);
+ try{
+   await navigator.clipboard.writeText(u.href);
+   $("copy").textContent="Link Copied ✓";
+ }catch(e){
+   prompt("Copy this product page link:",u.href);
+ }
+};
+$("year").textContent=new Date().getFullYear();
+choose(new URLSearchParams(location.search).get("product")||"dress",false);
+render();
+</script>
+</body>
+</html>
